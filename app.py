@@ -15,6 +15,9 @@ def webhook():
     if request.method == 'POST':
         data = request.json  # Pobierz dane JSON z żądania
         print(f"Otrzymane dane z webhooka: {data}")
+        return jsonify({"status": "success", "data": data}), 200
+    else:
+        return jsonify({"error": "Method not allowed"}), 405
 
         # Pobierz dane z JSON
         action = data.get('action')  # "BUY" lub "SELL"
