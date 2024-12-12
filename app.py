@@ -1,3 +1,7 @@
+@app.route('/')
+def home():
+    return "Hello, Render! Your service is live."
+
 from flask import Flask, request, jsonify
 import requests
 
