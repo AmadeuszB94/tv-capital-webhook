@@ -40,7 +40,7 @@ def webhook():
 # Funkcja pomocnicza do wysyłania zleceń do Capital.com
 def send_order_to_capital(action, instrument, amount, sl_pips, tp_pips):
     API_KEY = "r37TqfQufR2ZvlTx"  # Twój klucz API
-    BASE_URL = "https://api-capital.com"  # Zmień na właściwe środowisko
+    BASE_URL = "https://demo-api-capital.backend-capital.com/"  # Zmień na właściwe środowisko
 
     headers = {
         "Authorization": f"Bearer {API_KEY}",
