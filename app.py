@@ -40,38 +40,50 @@ def webhook():
 # Funkcja pomocnicza do wysyłania zleceń do Capital.com
 def send_order_to_capital(action, instrument, amount, sl_pips, tp_pips):
     API_KEY = "r37TqfQufR2ZvlTx"  # Twój klucz API
-    BASE_URL = "BASE_URL = "https://api-capital.com"  # Demo API; zmień na "https://api-capital.com" dla konta rzeczywistego
+    BASE_URL = "https://api-capital.com"  # Zmień na właściwe środowisko
 
     headers = {
         "Authorization": f"Bearer {API_KEY}",
         "Content-Type": "application/json"
     }
 
-    # Popraw nazwę instrumentu (zamiana spacji na podkreślenia)
-    instrument_url = instrument.replace(" ", "_")  # Zamień spacje na podkreślenia
+    try:
+        # Popraw nazwę instrumentu (zamiana spacji na podkreślenia)
+        instrument_url = instrument.replace(" ", "_")
+        print(f"Finalny URL: {BASE_URL}/market/{instrument_url}")
 
-    # Pobierz aktualną cenę instrumentu
-    market_info = requests.get(f"{BASE_URL}/market/{instrument_url}", headers=headers).json()
-    current_price = float(market_info['bidPrice'] if action == "SELL" else market_info['offerPrice'])
+        # Pobierz aktualną cenę instrumentu
+        response = requests.get(f"{BASE_URL}/market/{instrument_url}", headers=headers)
+        response.raise_for_status()  # Rzuć wyjątek, jeśli status != 200
+        market_info = response.json()
 
-    # Oblicz poziomy SL i TP
-    # US Tech 100: SL i TP to liczba punktów od aktualnej ceny
-    sl_price = current_price - sl_pips if action == "BUY" else current_price + sl_pips
-    tp_price = current_price + tp_pips if action == "BUY" else current_price - tp_pips
+        print(f"Otrzymane dane rynku: {market_info}")
 
-    # Dane zlecenia
-    order_data = {
-        "market": instrument,
-        "direction": action,
-        "orderType": "MARKET",
-        "quantity": amount,
-        "stopLevel": round(sl_price, 2),  # 2 miejsca po przecinku dla indeksów
-        "limitLevel": round(tp_price, 2)
-    }
+        current_price = float(market_info['bidPrice'] if action == "SELL" else market_info['offerPrice'])
 
-    # Wyślij zlecenie do Capital.com
-    response = requests.post(f"{BASE_URL}/trading/positions", json=order_data, headers=headers)
-    return response.json()
+        # Oblicz poziomy SL i TP
+        sl_price = current_price - sl_pips if action == "BUY" else current_price + sl_pips
+        tp_price = current_price + tp_pips if action == "BUY" else current_price - tp_pips
+
+        # Dane zlecenia
+        order_data = {
+            "market": instrument,
+            "direction": action,
+            "orderType": "MARKET",
+            "quantity": amount,
+            "stopLevel": round(sl_price, 2),
+            "limitLevel": round(tp_price, 2)
+        }
+        print(f"Zlecenie: {order_data}")
+
+        # Wyślij zlecenie
+        order_response = requests.post(f"{BASE_URL}/trading/positions", json=order_data, headers=headers)
+        order_response.raise_for_status()
+        return order_response.json()
+    except Exception as e:
+        print(f"Błąd: {e}")
+        return {"error": "Błąd podczas wysyłania zlecenia", "details": str(e)}
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
