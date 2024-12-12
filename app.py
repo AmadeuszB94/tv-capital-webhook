@@ -48,7 +48,11 @@ def send_order_to_capital(action, instrument, amount, sl_pips, tp_pips):
     }
 
     # Pobierz aktualną cenę instrumentu
-    market_info = requests.get(f"{BASE_URL}/market/{instrument}", headers=headers).json()
+# Popraw nazwę instrumentu (zamiana spacji na podkreślenia)
+instrument_url = instrument.replace(" ", "_")  # Zamień spacje na podkreślenia
+
+# Pobierz aktualną cenę instrumentu
+market_info = requests.get(f"{BASE_URL}/market/{instrument_url}", headers=headers).json()
     current_price = float(market_info['bidPrice'] if action == "SELL" else market_info['offerPrice'])
 
     # Oblicz poziomy SL i TP
