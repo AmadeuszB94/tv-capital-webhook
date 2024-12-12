@@ -34,9 +34,8 @@ def webhook():
 
 # 3. Funkcja pomocnicza do wysyłania zleceń do Capital.com
 def send_order_to_capital(action, instrument, amount, sl_pips, tp_pips):
-    # === MIEJSCE DO ZMIANY ===
-    API_KEY = r37TqfQufR2ZvlTx  # Wstaw swój klucz API z Capital.com
-    BASE_URL = "https://demo-api-capital.com"  # Zmieniaj na "https://api-capital.com" dla konta rzeczywistego
+    API_KEY = "TWÓJ_KLUCZ_API_CAPITAL"  # Wprowadź swój klucz API
+    BASE_URL = "https://demo-api-capital.com"  # Demo API lub rzeczywiste API
 
     headers = {
         "Authorization": f"Bearer {API_KEY}",
@@ -47,13 +46,10 @@ def send_order_to_capital(action, instrument, amount, sl_pips, tp_pips):
     market_info = requests.get(f"{BASE_URL}/market/{instrument}", headers=headers).json()
     current_price = float(market_info['bidPrice'] if action == "SELL" else market_info['offerPrice'])
 
-    # Oblicz poziomy SL i TP
-    pip_value = 0.0001  # Standardowy pip dla par walutowych
-    if "JPY" in instrument:  # Dla par z JPY pip wynosi 0.01
-        pip_value = 0.01
-
-    sl_price = current_price - sl_pips * pip_value if action == "BUY" else current_price + sl_pips * pip_value
-    tp_price = current_price + tp_pips * pip_value if action == "BUY" else current_price - tp_pips * pip_value
+    # Oblicz SL i TP
+    # US Tech 100: SL i TP to liczba punktów od aktualnej ceny
+    sl_price = current_price - sl_pips if action == "BUY" else current_price + sl_pips
+    tp_price = current_price + tp_pips if action == "BUY" else current_price - tp_pips
 
     # Dane zlecenia
     order_data = {
@@ -61,9 +57,13 @@ def send_order_to_capital(action, instrument, amount, sl_pips, tp_pips):
         "direction": action,
         "orderType": "MARKET",
         "quantity": amount,
-        "stopLevel": round(sl_price, 5),
-        "limitLevel": round(tp_price, 5)
+        "stopLevel": round(sl_price, 2),  # 2 miejsca po przecinku dla indeksów
+        "limitLevel": round(tp_price, 2)
     }
+
+    # Wyślij zlecenie do Capital.com
+    response = requests.post(f"{BASE_URL}/trading/positions", json=order_data, headers=headers)
+    return response.json()
 
     # Wyślij zlecenie do Capital.com
     response = requests.post(f"{BASE_URL}/trading/positions", json=order_data, headers=headers)
