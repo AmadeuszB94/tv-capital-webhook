@@ -8,14 +8,20 @@ API_KEY = "r37TqfQufR2ZvlTx"
 CST = "2V0KV2TXXlA77IAeg5OnexJo"
 SECURITY_TOKEN = "Gmadg8XUfXSS6pHzgW8lohxlbLP5GqF"
 
+# Endpoint Capital.com
 CAPITAL_API_URL = "https://demo-api-capital.backend-capital.com/api/v1/positions"
 
 @app.route('/api/v1/orders', methods=['POST'])
 def handle_order():
+    """
+    Obsługuje dane z TradingView i przesyła je dalej do Capital.com.
+    """
     try:
+        # Pobranie danych z webhooka TradingView
         data = request.json
         print("Otrzymane dane z TradingView:", data)
 
+        # Przygotowanie nagłówków
         headers = {
             "X-CAP-API-KEY": API_KEY,
             "CST": CST,
@@ -23,9 +29,13 @@ def handle_order():
             "Content-Type": "application/json"
         }
 
+        # Wysłanie żądania do API Capital.com
         response = requests.post(CAPITAL_API_URL, json=data, headers=headers)
+
+        # Zapisanie odpowiedzi do logów
         print("Odpowiedź z Capital.com:", response.status_code, response.text)
 
+        # Przekazanie odpowiedzi do TradingView
         if response.status_code == 200:
             return jsonify({"status": "success", "capital_response": response.json()}), 200
         else:
