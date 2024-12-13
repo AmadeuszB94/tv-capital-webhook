@@ -64,5 +64,21 @@ def handle_order():
 def home():
     return "Service is running and ready to receive signals!", 200
 
+# Funkcja pingująca Render, aby utrzymać usługę aktywną
+def ping():
+    url = "https://tv-capital-webhook.onrender.com/"  # Upewnij się, że URL kończy się '/'
+    while True:
+        try:
+            response = requests.get(url)
+            print(f"Ping sent to {url}, status code: {response.status_code}")
+        except Exception as e:
+            print(f"Error pinging {url}: {e}")
+        time.sleep(30)  # Ping co 30 sekund
+
+# Uruchomienie funkcji ping w tle
+thread = threading.Thread(target=ping)
+thread.daemon = True  # Wątek zakończy się automatycznie, gdy aplikacja się zamknie
+thread.start()
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
