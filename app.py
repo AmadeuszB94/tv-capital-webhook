@@ -9,7 +9,7 @@ CST = "2V0KV2TXXlA77IAeg5OnexJo"
 SECURITY_TOKEN = "Gmadg8XUfXSS6pHzgW8lohxlbLP5GqF"
 
 # Endpoint do wysyłania żądań do Capital.com
-CAPITAL_API_URL = "https://demo-api-capital.backend-capital.com/api/v1/orders"
+CAPITAL_API_URL = "https://demo-api-capital.backend-capital.com/api/v1/positions"
 
 @app.route('/api/v1/orders', methods=['POST'])
 def handle_order():
