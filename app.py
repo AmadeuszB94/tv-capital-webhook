@@ -38,7 +38,7 @@ def home():
     current_time = datetime.datetime.now()
     uptime = current_time - start_time
     return f"""
-    <h1>Service is running!</h1>
+    <h1>Alicja this service is running because Iam the king of the internet!</h1>
     <p>Server started at: {start_time}</p>
     <p>Uptime: {uptime}</p>
     """
