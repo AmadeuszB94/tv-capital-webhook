@@ -3,7 +3,7 @@ import requests
 
 app = Flask(__name__)
 
-# Dane API
+# Twoje dane API
 API_KEY = "r37TqfQufR2ZvlTx"
 CST = "2V0KV2TXXlA77IAeg5OnexJo"
 SECURITY_TOKEN = "Gmadg8XUfXSS6pHzgW8lohxlbLP5GqF"
