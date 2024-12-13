@@ -2,8 +2,12 @@ from flask import Flask, request, jsonify
 import threading
 import time
 import requests
+import datetime
 
 app = Flask(__name__)
+
+# Zapisujemy czas startu serwera
+start_time = datetime.datetime.now()
 
 # Funkcja pingująca Render, aby utrzymać usługę aktywną
 def ping():
@@ -28,10 +32,16 @@ def handle_order():
     print("Otrzymane dane z TradingView:", data)
     return jsonify({"status": "success", "received_data": data}), 200
 
-# Endpoint do obsługi pingowania
+# Endpoint główny - pokazuje czas działania serwera
 @app.route("/", methods=["GET"])
 def home():
-    return "Service is running!", 200
+    current_time = datetime.datetime.now()
+    uptime = current_time - start_time
+    return f"""
+    <h1>Service is running!</h1>
+    <p>Server started at: {start_time}</p>
+    <p>Uptime: {uptime}</p>
+    """
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
