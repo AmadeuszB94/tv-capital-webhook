@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 # Funkcja pingująca Render, aby utrzymać usługę aktywną
 def ping():
-    url = "https://tv-capital-webhook.onrender.com"  # Twój URL na Render
+    url = "https://tv-capital-webhook.onrender.com/"  # Upewnij się, że URL kończy się '/'
     while True:
         try:
             response = requests.get(url)
