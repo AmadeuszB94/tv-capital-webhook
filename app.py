@@ -3,39 +3,48 @@ import requests
 
 app = Flask(__name__)
 
-@app.route("/", methods=["POST"])
-def webhook():
-    data = request.json  # Odczytaj dane z TradingView
-    print("Otrzymano dane:", data)
+# Dane API
+API_KEY = "r37TqfQufR2ZvlTx"
+CST = "2V0KV2TXXlA77IAeg5OnexJo"
+SECURITY_TOKEN = "Gmadg8XUfXSS6pHzgW8lohxlbLP5GqF"
 
-    if "action" not in data or "ticker" not in data or "quantity" not in data:
-        return jsonify({"error": "Invalid payload"}), 400
+# Endpoint do wysyłania żądań do Capital.com
+CAPITAL_API_URL = "https://demo-api-capital.backend-capital.com/api/v1/orders"
 
-    action = "buy" if data["action"] == "BUY" else "sell"
-    api_data = {
-        "market": data["ticker"],
-        "direction": action,
-        "size": data["quantity"],
-        "orderType": "MARKET"
-    }
+@app.route('/api/v1/orders', methods=['POST'])
+def handle_order():
+    """
+    Odbiera dane z TradingView i przesyła je dalej do Capital.com.
+    """
+    try:
+        # Pobranie danych z webhooka TradingView
+        data = request.json
+        print("Otrzymane dane z TradingView:", data)
 
-    headers = {
-        "X-CAP-API-KEY": "r37TqfQufR2ZvlTx",
-        "CST": "2V0KV2TXXlA77IAeg5OnexJo",
-        "X-SECURITY-TOKEN": "Gmadg8XUfXSS6pHzgW8lohxlbLP5GqF",
-        "Content-Type": "application/json"
-    }
+        # Przygotowanie nagłówków do żądania
+        headers = {
+            "X-CAP-API-KEY": API_KEY,
+            "CST": CST,
+            "X-SECURITY-TOKEN": SECURITY_TOKEN,
+            "Content-Type": "application/json"
+        }
 
-    response = requests.post(
-        "https://demo-api-capital.backend-capital.com/api/v1/orders",
-        json=api_data,
-        headers=headers
-    )
+        # Wysłanie żądania do API Capital.com
+        response = requests.post(CAPITAL_API_URL, json=data, headers=headers)
 
-    if response.status_code == 201:
-        return jsonify({"status": "Order placed successfully!"})
-    else:
-        return jsonify({"error": response.json()}), response.status_code
+        # Zapisanie odpowiedzi do logów
+        print("Odpowiedź z Capital.com:", response.status_code, response.text)
 
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+        # Zwrócenie odpowiedzi z powrotem do TradingView
+        if response.status_code == 200:
+            return jsonify({"status": "success", "capital_response": response.json()}), 200
+        else:
+            return jsonify({"status": "error", "capital_error": response.text}), response.status_code
+
+    except Exception as e:
+        print("Błąd:", e)
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
