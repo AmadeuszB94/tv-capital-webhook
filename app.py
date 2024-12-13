@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 # Capital.com API konfiguracja
 CAPITAL_API_URL = "https://demo-api-capital.backend-capital.com/api/v1"
-CAPITAL_API_KEY = "YOUR_CAPITAL_API_KEY"  # Wstaw swój klucz API
+CAPITAL_API_KEY = "r37TqfQufR2ZvlTx"  # Wstaw swój klucz API
 ACCOUNT_ID = "YOUR_ACCOUNT_ID"  # Wstaw swój ID konta
 
 HEADERS = {
