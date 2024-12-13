@@ -21,8 +21,8 @@ def webhook():
 
     headers = {
         "X-CAP-API-KEY": "r37TqfQufR2ZvlTx",
-        "CST": "TWÓJ_CST",
-        "X-SECURITY-TOKEN": "TWÓJ_SECURITY_TOKEN",
+        "CST": "2V0KV2TXXlA77IAeg5OnexJo",
+        "X-SECURITY-TOKEN": "Gmadg8XUfXSS6pHzgW8lohxlbLP5GqF",
         "Content-Type": "application/json"
     }
 
