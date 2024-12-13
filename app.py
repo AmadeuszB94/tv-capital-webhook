@@ -21,12 +21,17 @@ thread = threading.Thread(target=ping)
 thread.daemon = True  # Wątek zakończy się automatycznie, gdy aplikacja się zamknie
 thread.start()
 
-# Endpoint obsługujący zamówienia z TradingView
+# Endpoint do obsługi zamówień z TradingView
 @app.route('/api/v1/orders', methods=['POST'])
 def handle_order():
     data = request.json
     print("Otrzymane dane z TradingView:", data)
     return jsonify({"status": "success", "received_data": data}), 200
+
+# Endpoint do obsługi pingowania
+@app.route("/", methods=["GET"])
+def home():
+    return "Service is running!", 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
