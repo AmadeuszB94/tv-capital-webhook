@@ -45,11 +45,6 @@ def home():
     <img src="/static/example.jpg" alt="Example Image" width="500" />
     """
 
-# Endpoint do obsługi plików statycznych (np. zdjęcia)
-@app.route('/static/<path:filename>')
-def static_files(filename):
-    return send_from_directory('static', filename)
-
 if __name__ == '__main__':
     # Utwórz folder 'static', jeśli nie istnieje
     os.makedirs('static', exist_ok=True)
