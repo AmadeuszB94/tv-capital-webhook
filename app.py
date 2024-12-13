@@ -1,8 +1,9 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 import threading
 import time
 import requests
 import datetime
+import os
 
 app = Flask(__name__)
 
@@ -32,16 +33,24 @@ def handle_order():
     print("Otrzymane dane z TradingView:", data)
     return jsonify({"status": "success", "received_data": data}), 200
 
-# Endpoint główny - pokazuje czas działania serwera
+# Endpoint główny - pokazuje czas działania serwera oraz zdjęcie
 @app.route("/", methods=["GET"])
 def home():
     current_time = datetime.datetime.now()
     uptime = current_time - start_time
     return f"""
-    <h1>Alicja this service is running because Iam the king of the internet!</h1>
+    <h1>Service is running!</h1>
     <p>Server started at: {start_time}</p>
     <p>Uptime: {uptime}</p>
+    <img src="/static/example.jpg" alt="Example Image" width="500" />
     """
 
+# Endpoint do obsługi plików statycznych (np. zdjęcia)
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    return send_from_directory('static', filename)
+
 if __name__ == '__main__':
+    # Utwórz folder 'static', jeśli nie istnieje
+    os.makedirs('static', exist_ok=True)
     app.run(host='0.0.0.0', port=5000)
